@@ -528,9 +528,6 @@ OnShakeListener{
             notificationManager.notify(id, notification);	
             notificationManager.cancelAll();
     }
-
-
-	
     public void toadCustom(String title) {
         // Getting the main view group
         ViewGroup viewGroup = (ViewGroup) findViewById(R.layout.activity_main);
