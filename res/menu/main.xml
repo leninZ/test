@@ -1,0 +1,28 @@
+
+<menu 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    
+
+     
+     <item 
+           android:id="@+id/myLocation"
+           android:icon="@drawable/item_location"
+           android:titleCondensed="Mi Ubicacion"/>
+     <item 
+           android:id="@+id/changemap"
+           android:icon="@drawable/satellite_right"
+           android:titleCondensed="cambiar mapa"/>  
+     <item 
+           android:id="@+id/myAlarmLocation"
+           android:icon="@drawable/item_alarm"
+           android:titleCondensed="Alarma"/>
+     
+     <item 
+           android:id="@+id/lanzarAcercaDe"  
+           android:icon="@drawable/item_configuration"
+           android:titleCondensed="configuracion"/>    
+ 
+
+</menu>
+
+ 
