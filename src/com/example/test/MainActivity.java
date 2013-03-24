@@ -4,6 +4,7 @@ import java.io.IOException;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ClipData.Item;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,7 +152,7 @@ OnShakeListener{
 	        changeMap();
 	        return true;
 	    case R.id.myLocation:
-	        mylocation();
+	        myLocation();
 	        return true;
 	    case R.id.myAlarmLocation:
 	    	myAlarmlocation();
@@ -172,7 +174,7 @@ OnShakeListener{
         {
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             CameraPosition cameraPosition = new CameraPosition(new LatLng(0,0),15,40,0); 
 	    	mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
            
@@ -492,7 +494,7 @@ OnShakeListener{
 	    	else if(mMap.getMapType()==1){ mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
 	    	
 	    }
-	public void mylocation() 
+	public void myLocation() 
 	{  
 		 Location location = mMap.getMyLocation();	
 		 if(location!=null){

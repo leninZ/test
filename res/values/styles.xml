@@ -5,13 +5,14 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Black.NoTitleBar">
-       <item name="android:panelFullBackground">@color/opaque</item>
+       <item name="android:panelFullBackground">@android:color/transparent</item>
        <item name="android:windowNoTitle">true</item>
+        
         <!-- shadow font -->
         <item name="android:shadowColor">#00ccff</item> 
         <item name="android:shadowRadius">1.5</item>
         <item name="android:shadowDx">1</item>
-        <item name="android:shadowDy">1</item>    
+        <item name="android:shadowDy">1</item>     
 
        
     </style>

@@ -4,10 +4,10 @@
     
 
      
-     <item 
+     <item  
            android:id="@+id/myLocation"
            android:icon="@drawable/item_location"
-           android:titleCondensed="Mi Ubicacion"/>
+           android:title="Mi Ubicacion"/>
      <item 
            android:id="@+id/changemap"
            android:icon="@drawable/satellite_right"
