@@ -180,31 +180,31 @@ containing a value of this type.
         public static final int x2=0x7f02001d;
     }
     public static final class id {
-        public static final int changemap=0x7f040010;
+        public static final int autocomplete=0x7f040006;
+        public static final int changemap=0x7f04000f;
         public static final int hybrid=0x7f040004;
-        public static final int icon=0x7f04000d;
-        public static final int imageView1=0x7f040007;
-        public static final int lanzarAcercaDe=0x7f040012;
-        public static final int linearLayout1=0x7f040006;
+        public static final int icon=0x7f04000c;
+        public static final int imageView1=0x7f04000a;
+        public static final int lanzarAcercaDe=0x7f040011;
         public static final int map=0x7f040005;
-        public static final int msg=0x7f04000e;
-        public static final int myAlarmLocation=0x7f040011;
-        public static final int myLocation=0x7f04000f;
+        public static final int msg=0x7f04000d;
+        public static final int myAlarmLocation=0x7f040010;
+        public static final int myLocation=0x7f04000e;
         public static final int none=0x7f040000;
         public static final int normal=0x7f040001;
         public static final int satellite=0x7f040002;
-        public static final int selectAlarm=0x7f04000c;
-        public static final int sonido=0x7f04000b;
+        public static final int selectAlarm=0x7f04000b;
+        public static final int sonido=0x7f040009;
         public static final int terrain=0x7f040003;
-        public static final int textView1=0x7f040008;
-        public static final int textView2=0x7f040009;
-        public static final int vibrar=0x7f04000a;
+        public static final int textView2=0x7f040007;
+        public static final int vibrar=0x7f040008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int opciones=0x7f030001;
-        public static final int rounded=0x7f030002;
-        public static final int toast_layout=0x7f030003;
+        public static final int list_item=0x7f030001;
+        public static final int opciones=0x7f030002;
+        public static final int rounded=0x7f030003;
+        public static final int toast_layout=0x7f030004;
     }
     public static final class menu {
         public static final int main=0x7f090000;

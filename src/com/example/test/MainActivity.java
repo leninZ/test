@@ -1,5 +1,15 @@
 package com.example.test;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,12 +31,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,7 +69,8 @@ LocationSource,
 OnMapClickListener,
 OnMarkerDragListener,
 OnMarkerClickListener,
-OnShakeListener{
+OnShakeListener,
+OnItemClickListener{
 
 	private NotificationManager notificationManager;
 	private LocationManager locationManager;
@@ -73,6 +88,9 @@ OnShakeListener{
 	
 	private SensorManager mSensorManager;
     private ShakeEventListener mSensorListener;
+	private AutoCompleteTextView autoCompView;
+	private PlacesAutoCompleteAdapter autoComplete;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -96,6 +114,13 @@ OnShakeListener{
         editor.putString("uri",RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString() ).commit();
 	    startGPS();
         setUpMapIfNeeded();
+        
+        autoCompView = (AutoCompleteTextView) findViewById(R.id.autocomplete);
+        autoComplete=new PlacesAutoCompleteAdapter(this, R.layout.list_item);
+        autoCompView.setAdapter(autoComplete);
+        autoCompView.setOnItemClickListener(this);
+
+        
     }
 	@Override
 	protected void onDestroy() 
@@ -561,7 +586,14 @@ OnShakeListener{
         // Displaying the toast message
         toast.show();
     }
-
-
-
+	@Override
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String str = (String) adapterView.getItemAtPosition(position);
+        
+        //Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+       LatLng latlng=autoComplete.getLanLong(str);
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng)); 
+        createAlarmMarker(latlng);
+    }
+  
 }
