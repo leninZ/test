@@ -5,30 +5,55 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Black.NoTitleBar">
-       <item name="android:panelFullBackground">@android:color/transparent</item>
-       <item name="android:windowNoTitle">true</item>
+     <item name="android:panelFullBackground">@color/opaque_black</item>
+
+        
+        <item name="android:windowNoTitle">true</item>
         
         <!-- shadow font -->
-        <item name="android:shadowColor">#00ccff</item> 
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:shadowColor">#000000</item> 
         <item name="android:shadowRadius">1.5</item>
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">1</item>     
 
-       
+    </style>
+     <style name="StreetMapTheme" >
+        <item name="android:panelFullBackground">@color/opaque_black</item>
     </style>
 
-    <!-- Application theme. -->
+    <!-- Application theme. --> 
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        
+        <!-- All customizations that are NOT specific to a especific android level here. -->
     </style>
     
-    
-     <style name="Opciones" parent="android:style/Theme.Dialog">
-      <item name="android:windowNoTitle">true</item>
-      <item name="android:windowBackground">@android:color/transparent</item>
-      
+    <style name="Opciones" parent="android:style/Theme.Dialog">
+     		<item name="android:windowNoTitle">true</item>
+     		<item name="android:windowBackground">@android:color/transparent</item>
+    </style> 
        
-       <!--
+  
+
+   
+
+</resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!--
        @drawable/texture
        @android:color/transparent
        @color/white    
@@ -39,9 +64,3 @@
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">1</item>  
         -->  
-    </style>
-    
-     
-     
-    
-</resources>

@@ -1,24 +1,16 @@
 package com.example.test;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ClipData.Item;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -32,7 +24,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +32,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,15 +60,16 @@ OnMapClickListener,
 OnMarkerDragListener,
 OnMarkerClickListener,
 OnShakeListener,
-OnItemClickListener{
+OnItemClickListener{ 
 
 	private NotificationManager notificationManager;
 	private LocationManager locationManager;
 	private GoogleMap mMap;
 	private OnLocationChangedListener mListener;
-	private Marker myMarker2;
-	private Marker myMarker;
+	private Marker markerRadio;
+	private Marker markerPhone;
 	private int radio;
+	private boolean play;
 	private Circle circle;
 	private SharedPreferences pref;
 	private Editor editor;
@@ -92,9 +83,20 @@ OnItemClickListener{
 	private PlacesAutoCompleteAdapter autoComplete;
 
 
+
+  
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+
+        }
+      }
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
-    { 	 
+    { 	 Toast.makeText(this, "onCreated", Toast.LENGTH_SHORT).show();
+         
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
@@ -124,30 +126,29 @@ OnItemClickListener{
     }
 	@Override
 	protected void onDestroy() 
-	{ Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
+	{// Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
 	  super.onDestroy();
-      notificationManager.cancelAll();
-	  //finish();
-      System.exit(0); //elimina procesos que quedan corriendo
+     //System.exit(0); //elimina procesos que quedan corriendo
 	     
 	}
     @Override
 	public void onPause()
 	{
 		//if(locationManager != null){  locationManager.removeUpdates(this);}
-    	mSensorManager.unregisterListener(mSensorListener);
+    	//mSensorManager.unregisterListener(mSensorListener);
 		super.onPause();
 	}
     public void onResume()
 	{
 		super.onResume();
 		mSensorManager.registerListener(mSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_UI);
-		setUpMapIfNeeded();
+		//setUpMapIfNeeded();
       //  if(locationManager != null){   
         	//mMap.setMyLocationEnabled(true);
         	//startGPS();
 
         	//}
+		
 	}
     public boolean onKeyDown(int keyCode, KeyEvent event) 
     {
@@ -155,13 +156,45 @@ OnItemClickListener{
         {
             case KeyEvent.KEYCODE_BACK:
             	if(pref.getBoolean("activado", false)){moveTaskToBack(true);}
-            	else{onDestroy();}
+            	else{
+            		salir();
+            		//System.exit(0);
+            		}
                 return true;
+            case KeyEvent.KEYCODE_HOME:
+            	salir();
+            	return true;
+            case KeyEvent.KEYCODE_SEARCH:
+            	AutoCompleteTextView searchBar = (AutoCompleteTextView)findViewById(R.id.autocomplete);
+            	if (searchBar.getVisibility()==0){searchBar.setVisibility(View.INVISIBLE);}
+            	else {searchBar.setVisibility(View.VISIBLE);}
+            	
+            	return true;	
+            
             	
         }
         return false;
     }
 
+    public void salir(){
+    	AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+    	 //myAlertDialog.setTitle("--- Title ---"); 
+    	 myAlertDialog.setMessage("Cerrar Aplicacion?");
+    	 myAlertDialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+
+    	  public void onClick(DialogInterface arg0, int arg1) {
+    	  // do something when the OK button is clicked
+    		  System.exit(0);
+    	  }});
+    	 myAlertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+    	       
+    	  public void onClick(DialogInterface arg0, int arg1) {
+    	  // do something when the Cancel button is clicked
+    	  }});
+    	 myAlertDialog.show();
+    	
+    	
+    } 
     //---------------------- M E N U -------------------------------------------------------------------
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -196,33 +229,34 @@ OnItemClickListener{
 	private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) 
-        {
-            // Try to obtain the map from the SupportMapFragment.
+        {   //Toast.makeText(this, "map es null", Toast.LENGTH_SHORT).show();
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            CameraPosition cameraPosition = new CameraPosition(new LatLng(0,0),15,40,0); 
-	    	mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-           
+            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(0,0),15,40,0)));
             if (mMap != null) 
-            {
+            {  	
                 setUpMap();
             }
 
-            //This is how you register the LocationSource
-           mMap.setLocationSource(this);
-          
-              
+           //This is how you register the LocationSource
+           mMap.setLocationSource(this);  
+        
+           
         }
-    }
+	}        
+
 	private void setUpMap() 
 	    {   //showNotification();
 	    	mMap.setMyLocationEnabled(true);
 	    	mMap.getUiSettings().setZoomControlsEnabled(true);
 	    	mMap.getUiSettings().setCompassEnabled(false);
 	    	mMap.getUiSettings().setMyLocationButtonEnabled(false);
+	    	//mMap.getUiSettings().setAllGesturesEnabled(true);
+	    	mMap.getUiSettings().setRotateGesturesEnabled(true);
 	    	mMap.setOnMarkerClickListener( this);
 	    	mMap.setOnMapClickListener(this);
 	    	mMap.setOnMarkerDragListener(this);
+
 
 	    }
 	private void startGPS(){
@@ -234,13 +268,13 @@ OnItemClickListener{
 		    	if(gpsIsEnabled)
 		    	{
 		    		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000L, 1F, this);
-		    		Toast.makeText(this, "gps activado", Toast.LENGTH_SHORT).show();
+		    		//Toast.makeText(this, "gps activado", Toast.LENGTH_SHORT).show();
 		
 		    	}
 		    	else if(networkIsEnabled)
 		    	{
 		    		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000L, 1F, this);
-		    		Toast.makeText(this, "network activado", Toast.LENGTH_SHORT).show();
+		    		//Toast.makeText(this, "network activado", Toast.LENGTH_SHORT).show();
 		    	}
 		    	else
 		    	{
@@ -257,17 +291,18 @@ OnItemClickListener{
 	//----------------------LOCATION LISTENER-----------------------------------------------------------
 	@Override
 	public void onLocationChanged(Location location) {
-		 Toast.makeText(this, "location change", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "location change", Toast.LENGTH_SHORT).show();
 		 if( mListener != null )
 	    {   	
 	        mListener.onLocationChanged( location );
 	        LatLngBounds bounds = this.mMap.getProjection().getVisibleRegion().latLngBounds;
-	        if(!bounds.contains(new LatLng(location.getLatitude(), location.getLongitude())))
+	       // this.mMap.getProjection().getVisibleRegion();
+	        if(!bounds.contains(new LatLng(location.getLatitude(), location.getLongitude()))&&play)
 	        {    
 	             mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));        
 	        }
 	        if(pref.getBoolean("activado", false)){	 
-	            if((radio >0)&&(twoPointsDistance( myMarker.getPosition(),new LatLng(location.getLatitude(), location.getLongitude()))<radio))
+	            if((radio >0)&&(twoPointsDistance( markerPhone.getPosition(),new LatLng(location.getLatitude(), location.getLongitude()))<radio))
 	            {   notificationLaunch("LLegamos :)","Geo Alarma","Detener la Alarma", 0);
 	        		if(pref.getBoolean("sonido", false)){	playSound(this, Uri.parse(pref.getString("uri", "waca")));}
 	        		if(pref.getBoolean("vibrar", false)){	mVibrator.vibrate(new long[] { 0,500,700 }, 0);}}
@@ -310,7 +345,7 @@ OnItemClickListener{
 	public void onShake() {
 			 //Toast.makeText(getBaseContext(), "Shake!", Toast.LENGTH_SHORT).show();
 	    	mSensorManager.unregisterListener(mSensorListener);
-	        if(myMarker!=null){onMarkerClick(myMarker);}
+	        if(markerPhone!=null){onMarkerClick(markerPhone);}
 	        sleep(1);
 	        mSensorManager.registerListener(mSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_UI);
 			
@@ -330,25 +365,23 @@ OnItemClickListener{
 		
 	}
  	public void createAlarmMarker(LatLng latLng) {//Toast.makeText(this, "map click", Toast.LENGTH_SHORT).show();
-		mMap.clear();
+ 		//Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
+ 		mMap.clear();
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         
 		MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         if(pref.getBoolean("activado", false)){ 
-        	//markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.clock_alarm_red));
-        	
         	if(pref.getBoolean("sonido", false)&&pref.getBoolean("vibrar", false)){markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.phone_red_a_v));}
         	else if(pref.getBoolean("sonido", false)){markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.phone_red_a));}
         	else{markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.phone_red_v));}
-        	
-        	}
+        } 
         else{ markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.phone_blue));}
-       
-        myMarker =  mMap.addMarker(markerOptions);
-
+        markerPhone =  mMap.addMarker(markerOptions);
         
-        double distRight = this.mMap.getProjection().getVisibleRegion().farRight.longitude;
+        double distRight = mMap.getProjection().getVisibleRegion().farRight.longitude;
+       
+        
         LatLng latLng2=new LatLng(latLng.latitude,latLng.longitude+(distRight-latLng.longitude)/3);
         markerOptions.position(latLng2);
         
@@ -356,7 +389,7 @@ OnItemClickListener{
         	markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.x2));
         	markerOptions.draggable(true);
         	markerOptions.title("presionar y arrastrar");
-        	myMarker2 =  mMap.addMarker(markerOptions);
+        	markerRadio =  mMap.addMarker(markerOptions);
         } 
        
         if(radio==0){radio=twoPointsDistance(latLng,latLng2);}
@@ -377,6 +410,7 @@ OnItemClickListener{
 	}
 	@Override
 	public void onMapClick(LatLng latLng) {
+		//Toast.makeText(this, "map click", Toast.LENGTH_SHORT).show();
 		radio=0;
 		if (!pref.getBoolean("activado", false)){createAlarmMarker(latLng);}
 	}
@@ -399,12 +433,12 @@ OnItemClickListener{
 	}
 	@Override
 	public boolean onMarkerClick(Marker arg0) { 
-		if (arg0.equals(myMarker)) {
+		if (arg0.equals(markerPhone)) {
 			if(!pref.getBoolean("activado", false)){
     			//Toast.makeText(this, "Alarma Activada", Toast.LENGTH_LONG).show();
     			//toadCustom("Alarma Activada");
     			editor.putBoolean("activado", true).commit();
-    			createAlarmMarker(myMarker.getPosition());
+    			createAlarmMarker(markerPhone.getPosition());
     			notificationLaunch("Alarma Activada","Geo Alarma","La Alarma esta activada", 1);
     			
     	    }
@@ -412,7 +446,7 @@ OnItemClickListener{
     			//Toast.makeText(this, "Alarma Desactivada", Toast.LENGTH_LONG).show();
     			//toadCustom("Alarma Desactivada");
     			editor.putBoolean("activado", false).commit();
-    			createAlarmMarker(myMarker.getPosition());
+    			createAlarmMarker(markerPhone.getPosition());
     			notificationToast("Alarma Desactivada", 2);
     			stopAlarm();
     		}
@@ -453,21 +487,21 @@ OnItemClickListener{
     //----------------------- MarkerDrag Listener--------------------------------------------------------------------	
     @Override
     public void onMarkerDrag(Marker arg0) {
-    	radio=twoPointsDistance(myMarker.getPosition(),myMarker2.getPosition());
+    	radio=twoPointsDistance(markerPhone.getPosition(),markerRadio.getPosition());
 		circle.setRadius(radio);
 		
 	}
 	@Override
 	public void onMarkerDragEnd(Marker arg0) {
-		radio=twoPointsDistance(myMarker.getPosition(),myMarker2.getPosition());
+		radio=twoPointsDistance(markerPhone.getPosition(),markerRadio.getPosition());
 		circle.setRadius(radio);
 		
 	}
 	@Override
 	public void onMarkerDragStart(Marker arg0) {
-		radio=twoPointsDistance(myMarker.getPosition(),myMarker2.getPosition());
+		radio=twoPointsDistance(markerPhone.getPosition(),markerRadio.getPosition());
 		circle.setRadius(radio);
-		myMarker2.hideInfoWindow();
+		markerRadio.hideInfoWindow();
 		
 	}
 
@@ -483,7 +517,7 @@ OnItemClickListener{
     protected void onActivityResult (int requestCode, int resultCode, Intent data){
 	    	//Toast.makeText(this, resultCode, Toast.LENGTH_SHORT).show();
 	    	if (requestCode==1234 && resultCode==RESULT_OK) {
-	    		if (myMarker!=null)createAlarmMarker(myMarker.getPosition());
+	    		if (markerPhone!=null)createAlarmMarker(markerPhone.getPosition());
 	    		if(pref.getBoolean("activado", false)){
 	    			//Toast.makeText(this, "alarma activada", Toast.LENGTH_SHORT).show();
 	    			//circle.setFillColor(0x40ff0000);//red
@@ -496,7 +530,7 @@ OnItemClickListener{
 	    		
 	    	}
 	    	if (requestCode==5 && resultCode==RESULT_OK) {
-	    		Uri alert = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+	    	    data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 /*
 	            if (uri != null)
 	            {
@@ -515,12 +549,20 @@ OnItemClickListener{
 //---------------------------F U N C I O N E S   M E N U--------------------------------------------------
 	public void changeMap() 
 	    {  
-	    	if(mMap.getMapType()==4){mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);}
-	    	else if(mMap.getMapType()==1){ mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);}
+	    	if(mMap.getMapType()==4){
+	    		//changeToTheme(this, Street);
+	    		//reload(Street);
+	    		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+	    	}
+	    	else if(mMap.getMapType()==1){
+	    	//changeToTheme(this, Hybrid);
+	    		//reload(Hybrid);
+	    		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+	    	}
 	    	
 	    }
 	public void myLocation() 
-	{  
+	{    play=true;
 		 Location location = mMap.getMyLocation();	
 		 if(location!=null){
 		 CameraPosition cameraPosition = new CameraPosition(new LatLng(location.getLatitude(), location.getLongitude()),15,40,0);
@@ -529,9 +571,9 @@ OnItemClickListener{
 	    
 	}
 	public void myAlarmlocation() 
-	{  
-	 	 if (myMarker!=null){   	 
-		 CameraPosition cameraPosition = new CameraPosition( myMarker.getPosition(),15,40,0);
+	{    play=false;
+	 	 if (markerPhone!=null){   	 
+		 CameraPosition cameraPosition = new CameraPosition( markerPhone.getPosition(),15,40,0);
 		 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 	 	 }
 	}
