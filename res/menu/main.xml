@@ -5,22 +5,21 @@
 
      
      <item  
-           android:id="@+id/myLocation"
+           android:id="@+id/myLocationx"
            android:icon="@drawable/item_location"
-           android:title="Mi Ubicacion"/>
-     <item 
-           android:id="@+id/changemap"
-           android:icon="@drawable/satellite_right"
-           android:titleCondensed="cambiar mapa"/>  
-     <item 
-           android:id="@+id/myAlarmLocation"
+           android:title="My Location"/>
+      <item 
+           android:id="@+id/myAlarmLocationx"
            android:icon="@drawable/item_alarm"
-           android:titleCondensed="Alarma"/>
-     
+           android:titleCondensed="Alarm Location"/>
      <item 
-           android:id="@+id/lanzarAcercaDe"  
+           android:id="@+id/changemapx"
+           android:icon="@drawable/satellite_right"
+           android:titleCondensed="Change Map"/>  
+      <item 
+           android:id="@+id/lanzarAcercaDex"  
            android:icon="@drawable/item_configuration"
-           android:titleCondensed="configuracion"/>    
+           android:titleCondensed="Configuration"/>    
  
 
 </menu>

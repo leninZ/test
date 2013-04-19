@@ -34,7 +34,10 @@ class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterab
     
     @Override
     public int getCount() {
+    	if (resultList != null){
         return resultList.size();
+    	}
+    	return 0;
     }
 
     @Override
@@ -76,7 +79,7 @@ class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterab
         HttpURLConnection conn = null;
         StringBuilder jsonResults = new StringBuilder();
         try {
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
+            StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);//https://maps.googleapis.com/maps/api/place/autocomplete/json
             sb.append("?sensor=false&key=" + API_KEY);
             sb.append("&components=country:cl");
             sb.append("&input=" + URLEncoder.encode(input, "utf8"));
@@ -94,7 +97,7 @@ class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterab
             Log.e(LOG_TAG, "Error processing Places API URL", e);
             return resultList;
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error connecting to Places API", e);
+            Log.e(LOG_TAG, "Error connecting to Places API (autocomplete)", e);
             return resultList;
         } finally {
             if (conn != null) {
@@ -144,7 +147,7 @@ class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterab
             Log.e(LOG_TAG, "Error processing Places API URL", e);
             return latlng;
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error connecting to Places API", e);
+            Log.e(LOG_TAG, "Error connecting to Places API (getlanlong)", e);
             return latlng;
         } finally {
             if (conn != null) {

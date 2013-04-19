@@ -22,7 +22,7 @@
         <item name="android:panelFullBackground">@color/opaque_black</item>
     </style>
 
-    <!-- Application theme. --> 
+    <!-- Application theme--> 
     <style name="AppTheme" parent="AppBaseTheme">
         
         <!-- All customizations that are NOT specific to a especific android level here. -->

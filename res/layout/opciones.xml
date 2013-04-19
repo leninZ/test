@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="Configuracion"
+        android:text="Configuration"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="30sp" />
 
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:button="@drawable/btn_check_holo_light"
-        android:text="Vibrar"
+        android:text="Vibrate"
         android:textSize="20sp" />
 
     <CheckBox
@@ -39,7 +39,7 @@
         android:button="@drawable/btn_check_holo_light"
         android:gravity="center_vertical|start"
         android:scrollbars="none"
-        android:text="Sonido"
+        android:text="Sound"
         android:textAlignment="textStart"
         android:textSize="20sp" />
 
