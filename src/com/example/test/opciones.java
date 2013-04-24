@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
  
@@ -34,6 +36,8 @@ public class opciones extends Activity  {
 	private Uri ringtone_uri;
 	private TextView selectAlarm;
 	private ImageView iconAlarm;
+	private EditText metros;
+	private EditText segundos;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,8 @@ public class opciones extends Activity  {
         iconAlarm=(ImageView) findViewById(R.id.imageView1);
         selectAlarm=(TextView) findViewById(R.id.selectAlarm);
         vibrar = (CheckBox) findViewById(R.id.vibrar);
+        segundos = (EditText)findViewById(R.id.editText1);
+        metros = (EditText)findViewById(R.id.editText2);
        
         
         
@@ -79,24 +85,36 @@ public class opciones extends Activity  {
             	}   
             }
         });
-        vibrar.setOnClickListener(new OnClickListener() {
+        sonido.setOnClickListener(new OnClickListener() {
 
-        	   @Override
-               public void onClick(View v) {
-               	if(vibrar.isChecked()){editor.putBoolean("vibrar", true).commit();}
-               	
-               	else{editor.putBoolean("vibrar", false).commit();
-               	     if(!sonido.isChecked()){
-               	    	 sonido.setChecked(true);editor.putBoolean("sonido", true).commit();
-               	    	selectAlarm.setVisibility(View.VISIBLE);
-                		iconAlarm.setVisibility(View.VISIBLE);
-               	     }
-               	
-               	}   
-               }
+            @Override
+            public void onClick(View v) {
+            	if(sonido.isChecked()){
+            		editor.putBoolean("sonido", true).commit();
+            		selectAlarm.setVisibility(View.VISIBLE);
+            		iconAlarm.setVisibility(View.VISIBLE);
+            		
+            	}
+            	
+            	else{editor.putBoolean("sonido", false).commit();
+            	     selectAlarm.setVisibility(View.INVISIBLE);
+        		     iconAlarm.setVisibility(View.INVISIBLE);
+            	     if(!vibrar.isChecked()){
+            	    	 vibrar.setChecked(true);editor.putBoolean("vibrar", true).commit();
+            	     }
+            	
+            	}   
+            }
         });
+
         
   	 
+    }
+    public void onPause(){
+    	//Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+    	editor.putInt("segundos", Integer.valueOf(segundos.getText().toString())).commit();
+    	editor.putInt("metros", Integer.valueOf(metros.getText().toString())).commit();
+    	super.onPause();
     }
 
 	public void selectRingtone (View view){

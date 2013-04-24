@@ -19,7 +19,11 @@
       <item 
            android:id="@+id/lanzarAcercaDex"  
            android:icon="@drawable/item_configuration"
-           android:titleCondensed="Configuration"/>    
+           android:titleCondensed="Configuration"/>  
+      <item 
+           android:id="@+id/allLocationsx"  
+           android:icon="@drawable/item_configuration"
+           android:titleCondensed="all locations"/>    
  
 
 </menu>
