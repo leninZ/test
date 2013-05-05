@@ -1,4 +1,6 @@
 package com.example.test;
+
+
 import java.io.IOException;
 
 import android.app.AlertDialog;
@@ -10,8 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
 import android.graphics.Point;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,6 +26,7 @@ import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +39,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
@@ -73,10 +77,9 @@ OnItemClickListener{
 	private Vibrator mVibrator;
 	private Notification notification;
 	private AutoCompleteTextView autoCompView;
-	private PlacesAutoCompleteAdapter autoComplete;
 	private boolean twoLocations=false;
-	private boolean background; //true: activity in background     false:activit onfocus 
-
+	private boolean firstLocation;
+/*
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -85,6 +88,7 @@ OnItemClickListener{
 
         }
       }
+      */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
     { 	 //Toast.makeText(this, "onCreated", Toast.LENGTH_SHORT).show();
@@ -103,23 +107,16 @@ OnItemClickListener{
         editor.putBoolean("activada", false).commit();
         editor.putBoolean("sonido", true).commit(); 
         editor.putBoolean("vibrar", true).commit();
-        editor.putString("uri",RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString() ).commit();
-        setUpMapIfNeeded();
-        /*
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
-        		new LatLng(location.getLatitude(), 
-        		location.getLongitude()), 
-        		5, 
-        		0,
-        		0)));
-        */
-        autoCompView = (AutoCompleteTextView) findViewById(R.id.autocomplete);
-        autoComplete=new PlacesAutoCompleteAdapter(this, R.layout.list_item);
-        autoCompView.setAdapter(autoComplete);
-        autoCompView.setOnItemClickListener(this);
+        firstLocation=true;
+     
         
-
+        setUpMapIfNeeded();
+        
+        
+        AutoCompleteTextView editTextAddress = (AutoCompleteTextView)findViewById(R.id.autocomplete);
+        editTextAddress.setAdapter(new AutoCompleteAdapter(this));
+        editTextAddress.setOnItemClickListener(this);
+   
         
     }
 	@Override
@@ -131,18 +128,13 @@ OnItemClickListener{
 	}
     @Override
 	public void onPause()
-	{   Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();  
-    	background=true;
-    	reCalculeGPS();
+	{   //Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();  
+    	
         super.onPause();
 	}
     public void onResume()
 	{   //Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
-    	background=false;
-	    stopGPS();
-	    //startGPS(pref.getInt("segundos", 2),pref.getInt("metros", 1));
-	    startGPS(10,1);
-	    //  myLocation();
+    	
 		super.onResume();
 	
 	}
@@ -176,8 +168,9 @@ OnItemClickListener{
 
     public void salir(){
     	AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
-    	 //myAlertDialog.setTitle("--- Title ---"); 
+    	 myAlertDialog.setTitle(R.string.app_name); 
     	 myAlertDialog.setMessage("Cerrar Aplicacion?");
+    	 myAlertDialog.setIcon(R.drawable.ic_launcher); 
     	 myAlertDialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 
     	  public void onClick(DialogInterface arg0, int arg1) {
@@ -197,19 +190,19 @@ OnItemClickListener{
     //---------------------- M E N U -------------------------------------------------------------------
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+       
 		
-	
-		getMenuInflater().inflate(R.menu.main, menu); 
-		return true;
 	}
-	@Override
+/*	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem mi = (MenuItem) menu.findItem(R.id.myLocationx);
-		mi.setIcon(R.drawable.ic_launcher);
-
+		//MenuItem mi = (MenuItem) menu.findItem(R.id.myLocationx);
+		//mi.setIcon(R.drawable.ic_launcher); 
 	     return super.onPrepareOptionsMenu(menu);
 	}
+	*/
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	mVibrator.vibrate(50);
@@ -250,8 +243,7 @@ OnItemClickListener{
             }  
         }
 	}        
-
-	private void setUpMap() 
+    private void setUpMap() 
 	    {  
 		    map.setLocationSource(this);//register LocationSource 
 	    	map.setMyLocationEnabled(true);
@@ -263,12 +255,13 @@ OnItemClickListener{
 	    	map.getUiSettings().setCompassEnabled(false);
             map.getUiSettings().setMyLocationButtonEnabled(false);
 	    	map.getUiSettings().setAllGesturesEnabled(true);
+	    	startGPS(3,0);
 	    	
 	    }
 	
 	//---------------------- G P S ---------------------------------------------------------------------
 	private void startGPS(Integer seconds, Integer distance){
-		Toast.makeText(this, "starGPS : "+seconds+"(s) "+distance+"(m)", Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, "starGPS : "+seconds+"(s) "+distance+"(m)", Toast.LENGTH_LONG).show();
 			 if(locationManager != null)
 		    {
 		        boolean gpsIsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -277,60 +270,60 @@ OnItemClickListener{
 		    	if(gpsIsEnabled)
 		    	{
 		    		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, seconds*1000, distance, this);
-		    		Toast.makeText(this, "gps activado", Toast.LENGTH_SHORT).show();
+		    		//Toast.makeText(this, "gps activado", Toast.LENGTH_SHORT).show();
 		
 		    	}
 		    	else if(networkIsEnabled)
 		    	{
 		    		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, seconds*1000, distance, this);
-		    		Toast.makeText(this, "network activado", Toast.LENGTH_SHORT).show();
+		    		//Toast.makeText(this, "network activado", Toast.LENGTH_SHORT).show();
 		    	}
 		    	else
 		    	{
-		    		//Show an error dialog that GPS is disabled...
+		    		 
+		    		AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+		    		myAlertDialog.setTitle(R.string.app_name);
+					myAlertDialog.setMessage(R.string.enableGPS);
+					myAlertDialog.setIcon(R.drawable.ic_launcher);
+		        	myAlertDialog.setNeutralButton(R.string.setActiveGPS, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+		        		  startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 2);
+		        	  }});
+		        	 
+		        	myAlertDialog.show();
+		    		
 		         }
 		    }
 		    else
 		    {
-		    	//Show some generic error dialog because something must have gone wrong with location manager.
+		    	Toast.makeText(this, R.string.noGPS, Toast.LENGTH_LONG).show();
 		    }
 			
 		}
-    private void stopGPS(){
-    	if(locationManager != null){  locationManager.removeUpdates(this);}
-    }
-    private void reCalculeGPS(){
-    	Toast.makeText(this, "recalculate", Toast.LENGTH_LONG).show();
-    	stopGPS();
-    	Location location = map.getMyLocation();
-    	float[] distancia = new float[1]; 
-        Location.distanceBetween(markerPhone.getPosition().latitude, markerPhone.getPosition().longitude, location.getLatitude(), location.getLongitude(), distancia);
-    	
-        Integer segundos = (int) (distancia[0]/50);
-	    startGPS(segundos,1);
-    }
-    
+   
     //----------------------LOCATION LISTENER-----------------------------------------------------------
 	@Override
 	public void onLocationChanged(Location location) {
 		 //Toast.makeText(this, "speed"+location.getSpeed()+"(m/s)", Toast.LENGTH_SHORT).show();
-		Toast.makeText(this, ":O", Toast.LENGTH_SHORT).show();
-		 if( mListener != null )
-	     {   	
+		
+		if( mListener != null ){   	
+			// Toast.makeText(this, ":O", Toast.LENGTH_SHORT).show();
 	        mListener.onLocationChanged( location );
             //--mover camara: si esta el foco  no esta en vista doble
 	        LatLngBounds bounds = this.map.getProjection().getVisibleRegion().latLngBounds;
-            if(bounds.contains(new LatLng(location.getLatitude(), location.getLongitude()))&&!twoLocations){    
+            if((bounds.contains(new LatLng(location.getLatitude(), location.getLongitude()))&&!twoLocations)||(firstLocation)){    
             	map.moveCamera(	
             			CameraUpdateFactory.newCameraPosition(
             					new CameraPosition(
             							new LatLng(location.getLatitude(),location.getLongitude()),
             							map.getCameraPosition().zoom,
-            							90,
+            							map.getCameraPosition().tilt,
             							location.getBearing()
+            							
             				    )
             			)
             	);
+            	if(firstLocation){firstLocation=false;}
             }
 	        //--alarma activada?
 	        if(pref.getBoolean("alarma", false)){	 
@@ -345,8 +338,8 @@ OnItemClickListener{
 	        	}
 	        	   
 	         }
-	        if(background&&markerPhone!=null){reCalculeGPS();}
-	    }
+	       
+	}
 		
 	}
 	@Override
@@ -384,13 +377,17 @@ OnItemClickListener{
 	//----------------------LOCATION SOURCE-------------------------------------------------------------
 	@Override
 	public void activate(OnLocationChangedListener arg0) {
+		
 		// TODO Auto-generated method stub
+		//Toast.makeText(this, "activate", Toast.LENGTH_LONG).show();
 		mListener = arg0;
+		
 		
 	}
 	@Override
 	public void deactivate() {
 		// TODO Auto-generated method stub
+		Toast.makeText(this, "deactivate", Toast.LENGTH_LONG).show();
 		mListener = null;
 		
 	}
@@ -452,11 +449,11 @@ OnItemClickListener{
 	}
 	@Override
 	public void onMapClick(LatLng latLng) {
-		
-		editor.putBoolean("alarma", false).commit(); 
 		mVibrator.vibrate(50);
-		radio=0;
-		//if (!pref.getBoolean("activado", false)){createAlarmMarker(latLng);}
+		 twoLocations=true;
+        radio=0;
+		if (pref.getBoolean("alarma", false)){stopAlarm(); }
+		editor.putBoolean("alarma", false).commit();  
 		createAlarmMarker(latLng);
 	}
 	@Override
@@ -477,9 +474,6 @@ OnItemClickListener{
     			editor.putBoolean("alarma", false).commit();
     			editor.putBoolean("activada", false).commit();
     			createAlarmMarker(markerPhone.getPosition());
-    			notificationToast("The alarm was deactivated", 2);
-    			notificationManager.cancel(1);
-    			notificationManager.cancel(0);
     			stopAlarm();
     		}
 			
@@ -509,10 +503,10 @@ OnItemClickListener{
     {     
     	if(pref.getBoolean("sonido", false)&&mMediaPlayer!=null){ mMediaPlayer.stop(); }
     	if(pref.getBoolean("vibrar", false)&&mVibrator!=null){ mVibrator.cancel(); }
-       // map.clear();
-        //radio=0;
- 	    //notificationManager.cancelAll();
- 	   // editor.putBoolean("activado", false).commit(); 
+    	
+    	notificationToast("The alarm was deactivated", 2);
+		notificationManager.cancel(1);
+		notificationManager.cancel(0);
  	      
     }
 
@@ -553,40 +547,19 @@ OnItemClickListener{
     	
 	        Intent i = new Intent(this, opciones.class);  
 	        
-	        startActivityForResult(i, 1234);
+	        startActivityForResult(i, 1);
 	       
 	      }
 	    @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data){
 	    	//Toast.makeText(this, resultCode, Toast.LENGTH_SHORT).show();
-	    	if (requestCode==1234 && resultCode==RESULT_OK) {
-	    		
+	    	if (requestCode==1 && resultCode==RESULT_OK) {
 	    		if (markerPhone!=null)createAlarmMarker(markerPhone.getPosition());
-	    		if(pref.getBoolean("alarma", false)){
-	    			//Toast.makeText(this, "alarma activada", Toast.LENGTH_SHORT).show();
-	    			//circle.setFillColor(0x40ff0000);//red
-	    	    }
-	    		else {
-	    			//Toast.makeText(this, "alarma no activada", Toast.LENGTH_SHORT).show();
-	    			//circle.setFillColor(0x401B8EE0);//blue
-	    		}
-	           
-	    		
 	    	}
-	    	if (requestCode==5 && resultCode==RESULT_OK) {
-	    	    data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-/*
-	            if (uri != null)
-	            {
-	                this.chosenRingtone = uri.toString();
-	            }
-	            else
-	            {
-	                this.chosenRingtone = null;
-	            }
-	           
-	*/  		
+	    	if (requestCode==2) {
+	    		startGPS(0,0);
 	    	}
+	    	
 	    
 	}
 
@@ -605,39 +578,53 @@ OnItemClickListener{
 	return false;	
 	}
 	public void myLocation() 
-	{    twoLocations=false;
+	{    twoLocations=true;
 	
-    
+	     //  locationManager.removeUpdates(this);
 	       Location location = map.getMyLocation();
 	     //Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			 if(location!=null){
 				 
 				 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
 						 new LatLng(location.getLatitude(), location.getLongitude()), 
-			        		15, 
+			        		18, 
 			        		90,
-			        		map.getCameraPosition().bearing)));
-			       
-				
-				 }
-			 else{ Toast.makeText(this, "no hay location", Toast.LENGTH_SHORT).show();}
+			        		map.getCameraPosition().bearing)),5000,new CancelableCallback(){
 
-    
+			            @Override
+			            public void onFinish()
+			            {
+			            	 twoLocations=false;
+			            }
+
+			            @Override
+			            public void onCancel()
+			            {
+			            	 twoLocations=false; 
+			            	
+			            }
+			        });
+			       
+				 //Toast.makeText(this, R.string.myLocation, Toast.LENGTH_SHORT).show();
+				 }
+			 else{ Toast.makeText(this, R.string.noLocation, Toast.LENGTH_SHORT).show();}		 
+			
+		 
 		 
 	
 	}
 	public void myAlarmlocation() 
-	{     twoLocations=false;
+	{     twoLocations=true;
 	 	 if (markerPhone!=null){   	 
 		 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
 				    markerPhone.getPosition(), 
-	        		15, 
+	        		17, 
 	        		90,
-	        		map.getCameraPosition().bearing)));
+	        		map.getCameraPosition().bearing)),5000, null);
 		 
 	 	 }
 	 	 else{
-	 		Toast.makeText(this, "no has colocado ninguna alarma, need help?", Toast.LENGTH_SHORT).show();
+	 		Toast.makeText(this, R.string.noAlarm, Toast.LENGTH_LONG).show();
 	 	 }
 	}
 	public void twoLocations() 
@@ -648,9 +635,10 @@ OnItemClickListener{
 	 		 
 	 		// Toast.makeText(this, String.valueOf(location.getSpeed()), Toast.LENGTH_SHORT).show();
 	 		 LatLngBounds bounds = new LatLngBounds.Builder().include(new LatLng(location.getLatitude(),location.getLongitude())).include(markerPhone.getPosition()).build();
-	 		 map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+	 		 map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50),5000, null);
 	 		
 	 	}
+	 	else{Toast.makeText(this, R.string.noAlarm, Toast.LENGTH_LONG).show();}
 	 	
 	}
 	//-----------------------N O T I F I C A T I O N S ---------------------------------------------------
@@ -706,20 +694,44 @@ OnItemClickListener{
     }
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String str = (String) adapterView.getItemAtPosition(position);
-        
-        //Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-        LatLng latlng=autoComplete.getLanLong(str);
-        map.animateCamera(CameraUpdateFactory.newLatLng(latlng)); 
+		twoLocations=true;
 
+        
+		Address address= (Address) adapterView.getItemAtPosition(position);
+	
+	
+       LatLng latlng = new LatLng (address.getLatitude(),address.getLongitude());
+        
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+        		latlng, 
+        		17, 
+        		0,
+        		map.getCameraPosition().bearing)),5000,new CancelableCallback(){
+
+            @Override
+            public void onFinish()
+            {
+            	 twoLocations=false;	
+
+            }
+
+            @Override
+            public void onCancel()
+            {
+            	 twoLocations=false; 
+            	
+            }
+        });
+        
       
         MarkerOptions markerOptions =new MarkerOptions();
 		markerOptions.position(latlng);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_search)); 
         map.addMarker(markerOptions);
+        
 	}
 	 @Override
-	    public void onUserInteraction(){
+	public void onUserInteraction(){
 		 
 	    }
   

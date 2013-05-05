@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="Configuration"
+        android:text="@string/optionTittle"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="30sp" />
 
@@ -22,32 +22,13 @@
         android:layout_marginTop="5dp"
         android:background="#1B8EE0" />
 
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="segundos"
-        android:inputType="number" >
-
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="metros"
-        android:inputType="number" />
-
     <CheckBox
         android:id="@+id/vibrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:button="@drawable/btn_check_holo_light"
-        android:text="Vibrate"
+        android:text="@string/vibrate"
         android:textSize="20sp" />
 
     <CheckBox
@@ -58,7 +39,7 @@
         android:button="@drawable/btn_check_holo_light"
         android:gravity="center_vertical|start"
         android:scrollbars="none"
-        android:text="Sound"
+        android:text="@string/sound"
         android:textAlignment="textStart"
         android:textSize="20sp" />
 

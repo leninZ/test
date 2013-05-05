@@ -4,10 +4,8 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17" />
-    <permission
-     android:name="com.example.test.permission.MAPS_RECEIVE"
-     android:protectionLevel="signature"/>
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="17" />
+    <permission android:name="com.example.test.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
     <uses-permission android:name="com.example.test.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -26,10 +24,10 @@
         android:value="AIzaSyCPCn1YDPjw7AyAg1M1Iol6zsJWayWDgP8"/>
      <activity
         android:name="com.example.test.MainActivity"
-        android:launchMode="singleTop"
+        android:launchMode="singleTop" 
         android:label="@string/app_name"
-        android:theme="@style/AppBaseTheme"
-        android:configChanges="orientation|keyboardHidden"
+        android:configChanges="orientation|screenSize"
+        android:theme="@style/Main"
         >
      	<intent-filter>
         	<action android:name="android.intent.action.MAIN" />

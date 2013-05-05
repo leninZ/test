@@ -207,41 +207,40 @@ containing a value of this type.
         public static final int zoom_gray=0x7f020037;
     }
     public static final class id {
-        public static final int allLocationsx=0x7f040015;
+        public static final int allLocationsx=0x7f040011;
         public static final int autocomplete=0x7f040007;
-        public static final int changemapx=0x7f040013;
-        public static final int editText1=0x7f040009;
-        public static final int editText2=0x7f04000a;
+        public static final int changemapx=0x7f040012;
         public static final int hybrid=0x7f040004;
-        public static final int icon=0x7f04000f;
-        public static final int imageView1=0x7f04000d;
-        public static final int lanzarAcercaDex=0x7f040014;
+        public static final int icon=0x7f04000d;
+        public static final int imageView1=0x7f04000b;
+        public static final int lanzarAcercaDex=0x7f040013;
         public static final int map=0x7f040006;
-        public static final int msg=0x7f040010;
-        public static final int myAlarmLocationx=0x7f040012;
-        public static final int myLocationx=0x7f040011;
+        public static final int msg=0x7f04000e;
+        public static final int myAlarmLocationx=0x7f040010;
+        public static final int myLocationx=0x7f04000f;
         public static final int none=0x7f040000;
         public static final int normal=0x7f040001;
         public static final int satellite=0x7f040002;
-        public static final int selectAlarm=0x7f04000e;
-        public static final int sonido=0x7f04000c;
+        public static final int selectAlarm=0x7f04000c;
+        public static final int sonido=0x7f04000a;
         public static final int terrain=0x7f040003;
         public static final int textView2=0x7f040008;
-        public static final int vibrar=0x7f04000b;
+        public static final int vibrar=0x7f040009;
         public static final int waca=0x7f040005;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int list_item=0x7f030001;
-        public static final int opciones=0x7f030002;
-        public static final int rounded=0x7f030003;
-        public static final int toast_layout=0x7f030004;
+        public static final int opciones=0x7f030001;
+        public static final int rounded=0x7f030002;
+        public static final int toast_layout=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f090000;
     }
     public static final class string {
+        public static final int ConfigurationItem=0x7f05001d;
         public static final int action_settings=0x7f050012;
+        public static final int allLocationItem=0x7f05001b;
         public static final int app_name=0x7f050011;
         /**   Title for notification shown when GooglePlayServices is unavailable [CHAR LIMIT=70] 
          */
@@ -252,6 +251,7 @@ containing a value of this type.
         /**   Requested by string saying which app requested the notification. [CHAR LIMIT=42] 
          */
         public static final int auth_client_requested_by_msg=0x7f050010;
+        public static final int changeMapItem=0x7f05001c;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -305,15 +305,36 @@ containing a value of this type.
         find the service-side assets. [CHAR LIMIT=25] 
          */
         public static final int common_signin_button_text_long=0x7f05000d;
+        /** GPS DIALOG  
+         */
+        public static final int enableGPS=0x7f050015;
         public static final int hello_world=0x7f050013;
         public static final int iconDescription=0x7f050014;
+        /**  ALARM 
+         */
+        public static final int myAlarm=0x7f050025;
+        public static final int myAlarmItem=0x7f05001a;
+        /**  LOCATION 
+         */
+        public static final int myLocation=0x7f050023;
+        /**  MENU
+         */
+        public static final int myLocationItem=0x7f050019;
+        public static final int noAlarm=0x7f050026;
+        public static final int noGPS=0x7f050018;
+        public static final int noLocation=0x7f050024;
+        public static final int optionTittle=0x7f050020;
+        public static final int search=0x7f050017;
+        public static final int selectAlarmPopup=0x7f05001f;
+        /**  ALARM OPTIONS 
+         */
+        public static final int selectAlarmTittle=0x7f05001e;
+        public static final int setActiveGPS=0x7f050016;
+        public static final int sound=0x7f050022;
+        public static final int vibrate=0x7f050021;
     }
     public static final class style {
         /** 
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    
-
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     
@@ -325,15 +346,13 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060003;
-        /**  Application theme
- All customizations that are NOT specific to a especific android level here. 
-         */
+        public static final int AppBaseTheme=0x7f060006;
         public static final int AppTheme=0x7f060002;
         public static final int ButtonAppTheme=0x7f060000;
+        public static final int DropDownListViewStyle=0x7f060004;
         public static final int ImageButtonAppTheme=0x7f060001;
+        public static final int Main=0x7f060003;
         public static final int Opciones=0x7f060005;
-        public static final int StreetMapTheme=0x7f060004;
     }
     public static final class styleable {
         /** Attributes that can be used with a MapAttrs.

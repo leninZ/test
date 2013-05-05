@@ -5,6 +5,34 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="iconDescription">iconDescription</string>
+    <!--GPS DIALOG  -->
+    <string name="enableGPS">Debes activar el GPS de tu dispositivo para poder determinar el momento en que llegues a la zona de alarma</string>
+    <string name="setActiveGPS">Activar</string>
+    
+    <string name="search">Buscar Dirección</string>
+    <string name="noGPS">El GPS esta desabilitado en tu dispositivo</string>
+    <!-- MENU-->
+    <string name="myLocationItem">Mi Ubicación</string>
+    <string name="myAlarmItem">Mi Alarma</string>
+    <string name="allLocationItem">Ubicación/Alarma</string>
+    <string name="changeMapItem">Cambiar Mapa</string>
+    <string name="ConfigurationItem">Configuración</string>
+
+    
+    <!-- ALARM OPTIONS -->
+    <string name="selectAlarmTittle">Selecionar Alarma</string>
+    <string name="selectAlarmPopup">Selecionar Alarma</string>
+    <string name="optionTittle">Configuración</string>
+    <string name="vibrate">Vibrar</string>
+    <string name="sound">Sonido</string>
+   
+    <!-- LOCATION -->
+    <string name="myLocation">Buscando tu ubicación</string>
+    <string name="noLocation">Localización no encontrada</string>
+      <!-- ALARM -->
+    <string name="myAlarm">Buscando la ubicación de tu Alarma </string>
+    <string name="noAlarm">Toca la pantalla para ingresar una alarma</string>
+    
     
     
     
