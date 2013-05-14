@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" > 
      <item  
-           android:id="@+id/myLocationx"
-         
+           android:id="@+id/myLocation"
+           android:icon="@drawable/item_location3"
            android:title="@string/myLocationItem"
-             android:icon="@drawable/item_location"
            />
-      <item 
-           android:id="@+id/myAlarmLocationx"
-           android:icon="@drawable/item_alarm"
+        <item 
+           android:id="@+id/myAlarmLocation"
+           android:icon="@drawable/item_alarm2"
            android:title="@string/myAlarmItem"
            />
-       <item 
-           android:id="@+id/allLocationsx"  
-           android:icon="@drawable/item_configuration"
+      <item 
+           android:id="@+id/allLocations"  
+           android:icon="@drawable/item_two" 
            android:title="@string/allLocationItem"
-         />  
+         />    
      <item 
-           android:id="@+id/changemapx"
-           android:icon="@drawable/satellite_right"
+           android:id="@+id/changemap"
+           android:icon="@drawable/satellite"
            android:title="@string/changeMapItem"
          />  
       <item 
-           android:id="@+id/lanzarAcercaDex"  
-           android:icon="@drawable/item_configuration"
+           android:id="@+id/lanzarAcercaDe"  
+           android:icon="@drawable/configuration"
            android:title="@string/ConfigurationItem"
           />  
        

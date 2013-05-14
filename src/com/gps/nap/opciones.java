@@ -1,4 +1,6 @@
-package com.example.test;
+package com.gps.nap;
+
+import com.gps.nap.R;
 
 import android.app.Activity;
 

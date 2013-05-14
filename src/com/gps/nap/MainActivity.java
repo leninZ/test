@@ -1,4 +1,4 @@
-package com.example.test;
+package com.gps.nap;
 
 
 import java.io.IOException;
@@ -19,12 +19,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gps.nap.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
@@ -76,9 +77,9 @@ OnItemClickListener{
 	private MediaPlayer mMediaPlayer;
 	private Vibrator mVibrator;
 	private Notification notification;
-	private AutoCompleteTextView autoCompView;
-	private boolean twoLocations=false;
-	private boolean firstLocation;
+	private boolean twoLocations=false;//bloquear automover camara
+	private boolean firstLocation;//hacer un zoom la primera vez que encuentra la localizacion
+	private boolean alarmZone;
 /*
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -129,12 +130,17 @@ OnItemClickListener{
     @Override
 	public void onPause()
 	{   //Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();  
-    	
+    	if(alarmZone){
+    	notificationLaunch(getString(R.string.weArrived),getString(R.string.app_name),getString(R.string.stopAlarm), 0);
+    	}
+    	else if(pref.getBoolean("alarma", false)){
+    		notificationLaunch(getString(R.string.goToSleep),getString(R.string.app_name),getString(R.string.alarmRunning), 1);
+    		}
         super.onPause();
 	}
     public void onResume()
 	{   //Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
-    	
+    	notificationManager.cancel(1);
 		super.onResume();
 	
 	}
@@ -144,7 +150,10 @@ OnItemClickListener{
         switch(keyCode)
         {
             case KeyEvent.KEYCODE_BACK:
-            	if(pref.getBoolean("alarma", false)){moveTaskToBack(true);}
+            	if(pref.getBoolean("alarma", false)){
+            		//notificationLaunch("La alarma ",getString(R.string.app_name),getString(R.string.alarmRunning), 1);
+            		moveTaskToBack(true);
+            		}
             	else{
             		salir();
             		//System.exit(0);
@@ -167,23 +176,12 @@ OnItemClickListener{
     }
 
     public void salir(){
-    	AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
-    	 myAlertDialog.setTitle(R.string.app_name); 
-    	 myAlertDialog.setMessage("Cerrar Aplicacion?");
-    	 myAlertDialog.setIcon(R.drawable.ic_launcher); 
-    	 myAlertDialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-
-    	  public void onClick(DialogInterface arg0, int arg1) {
-    	  // do something when the OK button is clicked
-    		  notificationManager.cancelAll();
-    		  System.exit(0);
-    	  }});
-    	 myAlertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-    	       
-    	  public void onClick(DialogInterface arg0, int arg1) {
-    	  // do something when the Cancel button is clicked
-    	  }});
-    	 myAlertDialog.show();
+    	
+    	  notificationManager.cancelAll();
+    	  notificationToast(getString(R.string.GPSnapClose), 2);
+		  System.exit(0);
+		  
+		
     	
     	
     } 
@@ -208,19 +206,19 @@ OnItemClickListener{
 	mVibrator.vibrate(50);
 	    
 	    switch (item.getItemId()) {
-	    case R.id.changemapx:
+	    case R.id.changemap:
 	        changeMap();
 	        return true;
-	    case R.id.myLocationx:
+	    case R.id.myLocation:
 	        myLocation();
 	        return true;
-	    case R.id.myAlarmLocationx:
+	    case R.id.myAlarmLocation:
 	    	myAlarmlocation();
 	    	return true;
-	    case R.id.lanzarAcercaDex:
+	    case R.id.lanzarAcercaDe:
 	    	lanzarAcercaDe();
 	    	return true;
-	    case R.id.allLocationsx:
+	    case R.id.allLocations:
 	    	twoLocations();
 	         return true;
 	  
@@ -235,7 +233,7 @@ OnItemClickListener{
         if (map == null) 
         {   //Toast.makeText(this, "map es null", Toast.LENGTH_SHORT).show();
             map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
          //   map.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(0,0),15,45,0)));
             if (map != null) 
             {  	
@@ -311,8 +309,33 @@ OnItemClickListener{
 	        mListener.onLocationChanged( location );
             //--mover camara: si esta el foco  no esta en vista doble
 	        LatLngBounds bounds = this.map.getProjection().getVisibleRegion().latLngBounds;
-            if((bounds.contains(new LatLng(location.getLatitude(), location.getLongitude()))&&!twoLocations)||(firstLocation)){    
-            	map.moveCamera(	
+            if(firstLocation){
+            	firstLocation=false;
+            	twoLocations=true;
+            	 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+						 new LatLng(location.getLatitude(), location.getLongitude()), 
+			        		17, 
+			        		90,
+			        		map.getCameraPosition().bearing)),5000,new CancelableCallback(){
+
+			            @Override
+			            public void onFinish()
+			            {
+			            	 twoLocations=false;
+			            }
+
+			            @Override
+			            public void onCancel()
+			            {
+			            	 twoLocations=false; 
+			            	
+			            }
+			        });
+            	}
+	        
+	        if(bounds.contains(new LatLng(location.getLatitude(), location.getLongitude()))&&!twoLocations){  
+            	
+            	map.animateCamera(	
             			CameraUpdateFactory.newCameraPosition(
             					new CameraPosition(
             							new LatLng(location.getLatitude(),location.getLongitude()),
@@ -323,7 +346,7 @@ OnItemClickListener{
             				    )
             			)
             	);
-            	if(firstLocation){firstLocation=false;}
+            
             }
 	        //--alarma activada?
 	        if(pref.getBoolean("alarma", false)){	 
@@ -331,7 +354,8 @@ OnItemClickListener{
 	            Location.distanceBetween(markerPhone.getPosition().latitude, markerPhone.getPosition().longitude, location.getLatitude(), location.getLongitude(), results);
 	        	if((results[0]<radio)&&(!pref.getBoolean("activada", false)))
                 {   
-	        		notificationLaunch("we arrived :)","Geo Alarma","Stop Alarm", 0);
+	        		notificationLaunch(getString(R.string.weArrived),getString(R.string.app_name),getString(R.string.stopAlarm), 0);
+	        		alarmZone=true;
                     if(pref.getBoolean("sonido", false)){	playSound(this, Uri.parse(pref.getString("uri", "waca")));}
 	        		if(pref.getBoolean("vibrar", false)){	mVibrator.vibrate(new long[] { 0,500,700 }, 0);}
 	        		editor.putBoolean("activada", true).commit();
@@ -423,7 +447,6 @@ OnItemClickListener{
         markerOptions.position(latLng2);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.x2));
         markerOptions.draggable(true);
-        markerOptions.title("presionar y arrastrar");
         markerRadio =  map.addMarker(markerOptions);
         }
 //marker circle        
@@ -465,7 +488,9 @@ OnItemClickListener{
     			//toadCustom("Alarma Activada");
     			editor.putBoolean("alarma", true).commit();
     			createAlarmMarker(markerPhone.getPosition());
-    			notificationLaunch("Alarm Is Running","GPS Nap"," Alarm Is Running", 1);
+    			//notificationLaunch("Alarm Is Running","GPS Nap"," Alarm Is Running", 1);
+    			
+    			notificationToast(getString(R.string.alarmRunning), 2);
     			
     	    }
     		else {
@@ -503,8 +528,8 @@ OnItemClickListener{
     {     
     	if(pref.getBoolean("sonido", false)&&mMediaPlayer!=null){ mMediaPlayer.stop(); }
     	if(pref.getBoolean("vibrar", false)&&mVibrator!=null){ mVibrator.cancel(); }
-    	
-    	notificationToast("The alarm was deactivated", 2);
+    	alarmZone=false;
+    	notificationToast(getString(R.string.alarmNoRunning), 2);
 		notificationManager.cancel(1);
 		notificationManager.cancel(0);
  	      
@@ -546,8 +571,7 @@ OnItemClickListener{
     public void lanzarAcercaDe(){
     	
 	        Intent i = new Intent(this, opciones.class);  
-	        
-	        startActivityForResult(i, 1);
+            startActivityForResult(i, 1);
 	       
 	      }
 	    @Override
@@ -555,9 +579,6 @@ OnItemClickListener{
 	    	//Toast.makeText(this, resultCode, Toast.LENGTH_SHORT).show();
 	    	if (requestCode==1 && resultCode==RESULT_OK) {
 	    		if (markerPhone!=null)createAlarmMarker(markerPhone.getPosition());
-	    	}
-	    	if (requestCode==2) {
-	    		startGPS(0,0);
 	    	}
 	    	
 	    
@@ -644,14 +665,22 @@ OnItemClickListener{
 	//-----------------------N O T I F I C A T I O N S ---------------------------------------------------
 	@SuppressWarnings("deprecation")
 	private void notificationLaunch(String charSecuence,String contentTitle,String contentText, int id)
-    {       notificationManager.cancelAll();
+    {       
+		    
+		    notificationManager.cancelAll();
 			notification = new Notification(R.drawable.ic_launcher,charSecuence, System.currentTimeMillis());
 			notification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;   
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1234, intent, 0);
             notification.setLatestEventInfo(this, contentTitle, contentText, pendingIntent);
-            notificationManager.notify(id, notification);	
+            notificationManager.notify(id, notification);	 
+            
+         
+            
+            
+            
+            
     }  
 	@SuppressWarnings("deprecation")
 	private void notificationToast(String tickerText, int id)
