@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GPS Nap Alarm</string>
+    <!--GPS DIALOG  -->
+    <string name="enableGPS">É preciso ativar o GPS do seu aparelho</string>
+    <string name="setActiveGPS">Configuraçâo</string>
+    
+    <string name="search">Procurar endereço</string>
+    <string name="noGPS">O gps esta desabilitado no seu aparelho</string>
+    
+    <!-- MENU-->
+    <string name="myLocationItem">Minha localizaçâo</string>
+    <string name="myAlarmItem">Localizaçâo pra acordar</string>
+    <string name="allLocationItem">Ambas localizações</string>
+    <string name="changeMapItem">Mudar o mapa</string>
+    <string name="ConfigurationItem">Configuraçâo</string>
+
+    
+    <!-- ALARM OPTIONS -->
+    <string name="selectAlarmTittle">Selecionar Alarme</string>
+    <string name="selectAlarmPopup">Selecionar Alarme</string>
+    <string name="optionTittle">Configuraçâo</string>
+    <string name="vibrate">Vibrar</string>
+    <string name="sound">Som</string>
+   
+    <!-- LOCATION -->
+    <string name="myLocation">Procurando sua localizaçâo</string>
+    <string name="noLocation">Your location has not been found yet</string>
+      <!-- ALARM -->
+    <string name="myAlarm">Procurando sua localizaçâo pra acordar </string>
+    <string name="noAlarm">Pulse na tela para entrar um alarme</string>
+    
+    <!-- NOTIFICATION -->
+    <string name="alarmRunning">O alarme esta ativado </string>
+    <string name="alarmNoRunning">O alarme foi desativado</string>
+
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="goToSleep">Vou dormir! :)</string>
+    <string name="weArrived">¡Oi! ¡Acorda! ¡chegamos! :O</string>
+    <string name="stopAlarm">Desativar o alarme </string>
+    <string name="GPSnapClose">¡Adeus! :)</string>
+     
+    
+    
+    
+
+</resources>

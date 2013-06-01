@@ -77,6 +77,7 @@ class AutoCompleteAdapter extends ArrayAdapter<Address> implements Filterable {
 						addressList = mGeocoder.getFromLocationName((String) constraint, 5);
 					} catch (IOException e) {
 						Log.d("auto","  FAIL "+(String) constraint);
+						Log.d("auto",  e.toString());
 					}
 				}
 				if (addressList == null) {

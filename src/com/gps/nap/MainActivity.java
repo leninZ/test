@@ -80,16 +80,7 @@ OnItemClickListener{
 	private boolean twoLocations=false;//bloquear automover camara
 	private boolean firstLocation;//hacer un zoom la primera vez que encuentra la localizacion
 	private boolean alarmZone;
-/*
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-
-        }
-      }
-      */
+	private boolean home=true;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
     { 	 //Toast.makeText(this, "onCreated", Toast.LENGTH_SHORT).show();
@@ -117,7 +108,7 @@ OnItemClickListener{
         AutoCompleteTextView editTextAddress = (AutoCompleteTextView)findViewById(R.id.autocomplete);
         editTextAddress.setAdapter(new AutoCompleteAdapter(this));
         editTextAddress.setOnItemClickListener(this);
-   
+        
         
     }
 	@Override
@@ -133,11 +124,12 @@ OnItemClickListener{
     	if(alarmZone){
     	notificationLaunch(getString(R.string.weArrived),getString(R.string.app_name),getString(R.string.stopAlarm), 0);
     	}
-    	else if(pref.getBoolean("alarma", false)){
+    	else if((pref.getBoolean("alarma", false))&&(home)){
     		notificationLaunch(getString(R.string.goToSleep),getString(R.string.app_name),getString(R.string.alarmRunning), 1);
     		}
         super.onPause();
 	}
+
     public void onResume()
 	{   //Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
     	notificationManager.cancel(1);
@@ -146,7 +138,6 @@ OnItemClickListener{
 	}
     public boolean onKeyDown(int keyCode, KeyEvent event) 
     {
-    	
         switch(keyCode)
         {
             case KeyEvent.KEYCODE_BACK:
@@ -156,12 +147,9 @@ OnItemClickListener{
             		}
             	else{
             		salir();
-            		//System.exit(0);
+            		
             		}
                 return true;
-            case KeyEvent.KEYCODE_HOME:
-            	salir();
-            	return true;
             case KeyEvent.KEYCODE_SEARCH:
             	AutoCompleteTextView searchBar = (AutoCompleteTextView)findViewById(R.id.autocomplete);
             	if (searchBar.getVisibility()==0){searchBar.setVisibility(View.INVISIBLE);}
@@ -174,16 +162,10 @@ OnItemClickListener{
         }
         return false;
     }
-
     public void salir(){
-    	
     	  notificationManager.cancelAll();
     	  notificationToast(getString(R.string.GPSnapClose), 2);
 		  System.exit(0);
-		  
-		
-    	
-    	
     } 
     //---------------------- M E N U -------------------------------------------------------------------
 	@Override
@@ -315,7 +297,7 @@ OnItemClickListener{
             	 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
 						 new LatLng(location.getLatitude(), location.getLongitude()), 
 			        		17, 
-			        		90,
+			        		0,
 			        		map.getCameraPosition().bearing)),5000,new CancelableCallback(){
 
 			            @Override
@@ -421,7 +403,21 @@ OnItemClickListener{
  	public void createAlarmMarker(LatLng latLng) {
  		LatLng latLng2;
  		map.clear();
-        map.animateCamera(CameraUpdateFactory.newLatLng(latLng));        
+ 		  if(!pref.getBoolean("alarma", false)){
+ 		 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+ 				latLng, 
+ 				map.getCameraPosition().zoom,
+	        		0,
+	        		map.getCameraPosition().bearing)),5000, null);   
+ 		  }
+ 		  else{
+ 			 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+ 	 				latLng, 
+ 	 				map.getCameraPosition().zoom, 
+ 		        		90,
+ 		        		map.getCameraPosition().bearing)),5000, null); 
+ 			  
+ 		  }
 //marker phone
 		MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
@@ -484,11 +480,9 @@ OnItemClickListener{
 		mVibrator.vibrate(50);
 		if (arg0.equals(markerPhone)) {
 			if(!pref.getBoolean("alarma", false)){
-    			//Toast.makeText(this, "Alarma Activada", Toast.LENGTH_LONG).show();
-    			//toadCustom("Alarma Activada");
     			editor.putBoolean("alarma", true).commit();
     			createAlarmMarker(markerPhone.getPosition());
-    			//notificationLaunch("Alarm Is Running","GPS Nap"," Alarm Is Running", 1);
+    			
     			
     			notificationToast(getString(R.string.alarmRunning), 2);
     			
@@ -504,7 +498,7 @@ OnItemClickListener{
 			
 		
 		}
-	    return false;
+	    return true;
 	}
 
 	//----------------------- S O N I D O ---------------------------------------------------------------
@@ -569,15 +563,15 @@ OnItemClickListener{
 
     //----------------------- L A N Z A R   M E N U ------------------------------------------------------
     public void lanzarAcercaDe(){
-    	
+    	    home=false;
 	        Intent i = new Intent(this, opciones.class);  
             startActivityForResult(i, 1);
 	       
 	      }
 	    @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data){
-	    	//Toast.makeText(this, resultCode, Toast.LENGTH_SHORT).show();
 	    	if (requestCode==1 && resultCode==RESULT_OK) {
+	    		home=true;
 	    		if (markerPhone!=null)createAlarmMarker(markerPhone.getPosition());
 	    	}
 	    	
@@ -630,18 +624,26 @@ OnItemClickListener{
 				 }
 			 else{ Toast.makeText(this, R.string.noLocation, Toast.LENGTH_SHORT).show();}		 
 			
-		 
+	
 		 
 	
 	}
 	public void myAlarmlocation() 
 	{     twoLocations=true;
 	 	 if (markerPhone!=null){   	 
+	 		if(!pref.getBoolean("alarma", false)){
 		 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
 				    markerPhone.getPosition(), 
 	        		17, 
-	        		90,
+	        		0,
 	        		map.getCameraPosition().bearing)),5000, null);
+	 		}else{
+	 			 map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+	 				    markerPhone.getPosition(), 
+	 	        		17, 
+	 	        		90,
+	 	        		map.getCameraPosition().bearing)),5000, null);
+	 		}
 		 
 	 	 }
 	 	 else{
@@ -763,5 +765,15 @@ OnItemClickListener{
 	public void onUserInteraction(){
 		 
 	    }
-  
+	
 }
+/*
+public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+
+    }
+  }
+  */
