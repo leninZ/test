@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" > 
+     <item  
+           android:id="@+id/myLocation"
+           android:icon="@drawable/item_location3"
+           android:title="@string/myLocationItem"
+           />
+        <item 
+           android:id="@+id/myAlarmLocation"
+           android:icon="@drawable/item_alarm2"
+           android:title="@string/myAlarmItem"
+           />
+      <item 
+           android:id="@+id/allLocations"  
+           android:icon="@drawable/item_two" 
+           android:title="@string/allLocationItem"
+         />    
+     <item 
+           android:id="@+id/changemap"
+           android:icon="@drawable/satellite"
+           android:title="@string/changeMapItem"
+         />  
+      <item 
+           android:id="@+id/lanzarAcercaDe"  
+           android:icon="@drawable/configuration"
+           android:title="@string/ConfigurationItem"
+          />  
+       
+ 
+
+</menu>
+
+ 
