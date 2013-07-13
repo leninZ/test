@@ -1,0 +1,45 @@
+	<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+<style name="Main">
+      <item name="android:windowNoTitle">true</item>    
+      <item name="android:panelFullBackground">@color/opaque_black</item>
+      <item name="android:panelBackground">@color/opaque_black</item>
+      <item name="android:textSize">16sp</item>   
+      <item name="android:windowBackground">@color/opaque_black</item>
+      <item name="android:windowTitleStyle">@style/tittle</item>
+       
+      
+      <item name="android:textColor">@color/white</item><!-- color del texto -->
+      <!-- sombra a las letras -->
+      <item name="android:shadowColor">#000000</item> 
+      <item name="android:shadowRadius">1.5</item>
+      <item name="android:shadowDx">1</item>
+      <item name="android:shadowDy">1</item>   
+      <!-- estilo de drowdown del search -->
+      <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
+</style>
+
+<style name="tittle">
+    <item name="android:textColor">@color/celeste</item>
+</style>
+<style name="DropDownListViewStyle">
+
+  <item name="android:divider">@color/celeste</item>
+  <item name="android:dividerHeight">1dp</item>
+  <item name="android:background">@color/opaque_black</item>
+  <item name="android:paddingLeft">10dp</item>
+  <item name="android:paddingRight">10dp</item>
+</style>
+
+
+
+
+    
+<style name="Opciones" parent="android:style/Theme.Dialog">
+	<item name="android:windowNoTitle">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+</style> 
+       
+
+	</resources>
+

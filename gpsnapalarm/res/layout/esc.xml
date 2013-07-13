@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/opaque_black"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_marginLeft="29dp"
+        android:layout_toRightOf="@+id/button1"
+        android:text="Button" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_above="@+id/button2"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="21dp"
+        android:background="#1B8EE0" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="59dp"
+        android:background="#1B8EE0" />
+
+    <ImageView
+        android:id="@+id/lupa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/button1"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/lupa"
+        android:layout_centerHorizontal="true"
+        android:text="GPS nap"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/view1"
+        android:layout_marginTop="108dp"
+        android:text="Button" />
+
+</RelativeLayout>
