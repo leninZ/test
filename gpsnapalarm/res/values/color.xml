@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="opaque_black">#90000000</color>
+    <color name="opaque_black">#cc000000</color>
     <color name="opaque_white">#80ffffff</color>
     <color name="opaque_blue">#801B8EE0</color>
+    <color name="black">#000000</color>
      <color name="white">#ffffff</color>
      <color name="red">#e40045</color>
      <color name="green">#1BE022</color>

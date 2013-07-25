@@ -3,46 +3,123 @@
     android:id="@+id/waca"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@android:color/white"
     tools:context=".MainActivity" >
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        class="com.google.android.gms.maps.SupportMapFragment" />
+    <LinearLayout
+        android:id="@+id/mapfrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:gravity="center"
+        android:orientation="vertical" >
 
-    <AutoCompleteTextView
-        android:id="@+id/autocomplete"
-        android:layout_width="wrap_content"
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="fill_parent"
+            android:layout_height="300dp"
+            android:layout_weight="0.49"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/top_menu"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@drawable/edit_text_holo_light"
-        android:ems="10"
-        android:hint="@string/search"
-        android:paddingLeft="40dp"
-        android:popupBackground="@drawable/list_selector_holo_light"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        android:textStyle="bold"
-        android:typeface="monospace" >
-
-        <requestFocus />
-    </AutoCompleteTextView>
-
-    <ImageView
-        android:id="@+id/lupa"
-        android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:src="@drawable/search_blue" />
+        android:background="@drawable/patch_bottom"
+        android:onClick="nada"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp" >
+
+        <ImageView
+            android:id="@+id/lupa"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_s_on" />
+
+        <AutoCompleteTextView
+            android:id="@+id/autocomplete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_holo_light"
+            android:ems="10"
+            android:hint="@string/search"
+            android:paddingLeft="10dp"
+            android:popupBackground="@drawable/list_selector_holo_light"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/darker_gray"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_menu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/patch_top"
+        android:clickable="false"
+        android:gravity="center_horizontal"
+        android:onClick="nada"
+        android:padding="10dp" >
+
+        <ToggleButton
+            android:id="@+id/locationx"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/mn_location"
+            android:onClick="myLocation"
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/alarmax"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/mn_alarm"
+            android:onClick="myAlarmlocation"
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/bothx"
+         android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/mn_both"
+            android:onClick="twoLocations"
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/layerx"
+           android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/mn_layer"
+            android:onClick="changeMap"
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/settingsx"
+           android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/mn_settings"
+            android:onClick="lanzarAcercaDe" 
+            android:textOff=""
+            android:textOn=""/>
+
+    </LinearLayout>
 
 </RelativeLayout>

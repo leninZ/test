@@ -17,7 +17,7 @@
          />    
      <item 
            android:id="@+id/changemap"
-           android:icon="@drawable/satellite"
+           android:icon="@drawable/item_satellite"
            android:title="@string/changeMapItem"
          />  
       <item 
